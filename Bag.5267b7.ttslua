@@ -1,0 +1,100 @@
+DEBUG = true
+ALL_PLAYERS = {'White', 'Red', 'Orange', 'Yellow',
+               'Green', 'Blue', 'Purple','Pink'}
+button_parameters = {
+index = 0,
+click_function = 'setup', function_owner = self, label = 'Setup',
+position = {4, 1, 0},
+rotation = {0,180,0},
+scale = {4,4,4},
+width = 400, height = 200,
+font_size = 80
+}
+go_guid =  '7df05e'
+function setup()
+		createParametres()
+		local inventory = self.getObjects()
+		check = false
+		if DEBUG == true then
+				seatedPlayers = ALL_PLAYERS
+		else
+				seatedPlayers = getSeatedPlayers()
+		end
+		count = 1
+		maxCount = #seatedPlayers
+		for i, parameter  in ipairs(setup_parametres) do
+				if parameter.col == seatedPlayers[count] and count<=maxCount  then
+					  self.takeObject({guid = parameter.guid, position = parameter.position,
+						rotation = parameter.rotation , scale = parameter.scale})
+						count=count + 1
+						local tile = getObjectFromGUID(parameter.guid)
+						tile.locked = true
+						--print(logString(parameter.col))
+				end
+		end
+		print(tostring((tonumber(count)-1))..' boards has spawned')
+		destroyObject(self)
+end
+function onLoad(save_state)
+	self.createButton(button_parameters)
+end
+function createParametres()
+    setup_parametres = {
+        {
+            col = 'White',
+            position = {9.00, 0.96, -12.80},
+            rotation = {0.00, 180.00, 0.00},
+            scale = {3.08, 1.00, 3.08},
+            guid = 'b4852e'
+        },
+        {
+          col = 'Red',
+          position = {-11.00, 0.96, -12.80},
+          rotation = {0.00, 180.00, 0.00},
+          scale = {3.08, 1.00, 3.08},
+          guid = '365762'
+        },
+        {
+          col = 'Orange',
+          position = {-23.50, 0.96, -8.00},
+          rotation = {0.00, 270.00, 0.00},
+          scale = {3.08, 1.00, 3.08},
+          guid = '5a4bfd'
+        },
+        {
+          col = 'Yellow',
+          position = {-23.50, 0.96, 11.00},
+          rotation = {0.00, 270.00, 0.00},
+          scale = {3.08, 1.00, 3.08},
+          guid = '145cc7'
+        },
+        {
+          col = 'Green',
+          position = {-9.00, 0.96, 13.00},
+          rotation = {0.00, 0.00, 0.00},
+          scale = {3.08, 1.00, 3.08},
+          guid = 'a2d068'
+        },
+        {
+          col = 'Blue',
+          position = {11.00, 0.96, 13.00},
+          rotation = {0.00, 0.00, 0.00},
+          scale = {3.08, 1.00, 3.08},
+          guid = '84ad30'
+        },
+        {
+          col = 'Purple',
+          position = {23.00, 0.96, 9.00},
+          rotation = {0.00, 90.00, 0.00},
+          scale = {3.08, 1.00, 3.08},
+          guid = 'cc46e6'
+        },
+        {
+          col = 'Pink',
+          position = {23.00, 0.96, -9.50},
+          rotation = {0.00, 90.00, 0.00},
+          scale = {3.08, 1.00, 3.08},
+          guid = 'f8819c'
+        }
+    }
+end
