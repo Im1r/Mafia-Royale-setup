@@ -1,0 +1,268 @@
+--Переменная для отладки кода, отключает сохранение параметров в состояние объекта,
+-- т.к. если редактировать без отключения - значения кнопок будут равны nil, что приведет к ошибкам компиляции
+disableSave = true
+--После выгрузки скрипта (ctrl+shift+s)также нужно сохранить игру заново
+-- МИН и МАКС значения для параметров игрока
+MINIMUM_HP = 0
+MAXIMUM_HP = 7
+MINIMUM_RANGE = 1
+MAXIMUM_RANGE = 5
+MINIMUM_DISTANCE = 1
+MAXIMUM_DISTANCE = 5
+MINIMUM_INCOME = -50
+MAXIMUM_INCOME = 650
+-- Цвета кнопок в формате RGB от 0.0 до 1.0
+-- Для перевода из RGB (0-255), нужно разделить на 255
+BUTTON_BACKGROUND_COLOR = {0.392, 0.47, 0.77}
+BUTTON_FONT_COLOR = {1.0, 1.0, 1.0}
+--Общие параметры кнопок
+ONE_DIGIT_FONT_SIZE = 70
+TWO_DIGIT_FONT_SIZE = 100
+THREE_DIGIT_FONT_SIZE = 75
+PLUS_ONE_BUTTON_LABEL = '+1'
+MINUS_ONE_BUTTON_LABEL = '-1'
+ONE_DIGIT_BUTTON_HEIGHT = 115
+ONE_DIGIT_BUTTON_WIDTH = 115
+-- Параметры кнопки HP (для прозрачности, мы указываем размеры кнопок значений == 0)
+HP_BUTTON_HORIZONTAL_POSITION = 0.015   -- минус влево, плюс вправо
+HP_BUTTON_VERTICAL_POSITION = -0.41    -- минус вверх, плюс вниз
+-- Параметры кнопки +1 HP
+PLUS_HP_BUTTON_HORIZONTAL_POSITION = 0.26  -- минус влево, плюс вправо
+PLUS_HP_BUTTON_VERTICAL_POSITION = -0.42   -- минус вверх, плюс вниз
+-- Параметры кнопки -1 HP
+MINUS_HP_BUTTON_HORIZONTAL_POSITION = -0.23   -- минус влево, плюс вправо
+MINUS_HP_BUTTON_VERTICAL_POSITION = -0.42    -- минус вверх, плюс вниз
+
+-- Параметры кнопки RANGE
+RANGE_BUTTON_HORIZONTAL_POSITION = -1.305 -- минус влево, плюс вправо
+RANGE_BUTTON_VERTICAL_POSITION = 0.32    -- минус вверх, плюс вниз
+-- Параметры кнопки +1 RANGE
+PLUS_RANGE_BUTTON_HORIZONTAL_POSITION = -1.305   -- минус влево, плюс вправо
+PLUS_RANGE_BUTTON_VERTICAL_POSITION = 0.08   -- минус вверх, плюс вниз
+-- Параметры кнопки -1 RANGE
+MINUS_RANGE_BUTTON_HORIZONTAL_POSITION = -1.305   -- минус влево, плюс вправо
+MINUS_RANGE_BUTTON_VERTICAL_POSITION = 0.52    -- минус вверх, плюс вниз
+
+-- Параметры кнопки DISTANCE
+DISTANCE_BUTTON_HORIZONTAL_POSITION = 1.32 -- минус влево, плюс вправо
+DISTANCE_BUTTON_VERTICAL_POSITION = 0.32    -- минус вверх, плюс вниз
+-- Параметры кнопки +1 DISTANCE
+PLUS_DISTANCE_BUTTON_HORIZONTAL_POSITION = 1.33   -- минус влево, плюс вправо
+PLUS_DISTANCE_BUTTON_VERTICAL_POSITION = 0.09   -- минус вверх, плюс вниз
+-- Параметры кнопки -1 DISTANCE
+MINUS_DISTANCE_BUTTON_HORIZONTAL_POSITION = 1.32   -- минус влево, плюс вправо
+MINUS_DISTANCE_BUTTON_VERTICAL_POSITION = 0.52    -- минус вверх, плюс вниз
+-- Параметры кнопки INCOME (для прозрачности, мы указываем размеры кнопок значений == 0)
+INCOME_BUTTON_HORIZONTAL_POSITION = 0.015   -- минус влево, плюс вправо
+INCOME_BUTTON_VERTICAL_POSITION = -0.7    -- минус вверх, плюс вниз
+-- Параметры кнопки +1 INCOME
+PLUS_INCOME_BUTTON_HORIZONTAL_POSITION = 0.26  -- минус влево, плюс вправо
+PLUS_INCOME_BUTTON_VERTICAL_POSITION = -0.7   -- минус вверх, плюс вниз
+-- Параметры кнопки -1 INCOME
+MINUS_INCOME_BUTTON_HORIZONTAL_POSITION = -0.26   -- минус влево, плюс вправо
+MINUS_INCOME_BUTTON_VERTICAL_POSITION = -0.7    -- минус вверх, плюс вниз
+--Стандартные значения параметров
+default_data = {hp = 7, range = 1, distance = 1, income = 200}
+
+function updateSave() --обновляет значения параметров
+    saved_data = JSON.encode(data)
+    if disableSave==true then saved_data="" end
+    self.script_state = saved_data
+end
+--
+function onLoad(saved_data)
+    if disableSave==true then saved_data="" end
+    if saved_data ~= "" then
+        data = JSON.decode(saved_data)
+    else
+        data = default_data
+    end
+    generateButtonParameters()
+    createButtons()
+end
+
+function add_hp()
+    data.hp = math.min(data.hp + 1, MAXIMUM_HP)
+    updateHP()
+    updateSave()
+end
+--
+function subtract_hp()
+    data.hp = math.max(data.hp - 1, MINIMUM_HP)
+    updateHP()
+    updateSave()
+end
+--
+function add_range()
+    data.range = math.min(data.range + 1, MAXIMUM_RANGE)
+    updateRange()
+    updateSave()
+end
+function subtract_range()
+    data.range = math.max(data.range - 1, MINIMUM_RANGE)
+    updateRange()
+    updateSave()
+end
+--
+function add_distance()
+    data.distance = math.min(data.distance + 1, MAXIMUM_DISTANCE)
+    updateDistance()
+    updateSave()
+end
+function subtract_distance()
+    data.distance = math.max(data.distance - 1, MINIMUM_DISTANCE)
+    updateDistance()
+    updateSave()
+end
+--
+function add_income()
+    data.income = math.min(data.income + 50, MAXIMUM_INCOME)
+    updateIncome()
+    updateSave()
+end
+function subtract_income()
+    data.income = math.max(data.income - 50, MINIMUM_INCOME)
+    updateIncome()
+    updateSave()
+end
+-- Check if the description is a number, and set the hp to that number
+function click_none() end
+--
+function updateHP()
+    hp_button_parameters.label = tostring(data.hp)
+    self.editButton(hp_button_parameters)
+end
+function updateRange()
+    range_button_parameters.label = tostring(data.range)
+    self.editButton(range_button_parameters)
+end
+function updateDistance()
+    distance_button_parameters.label = tostring(data.distance)
+    self.editButton(distance_button_parameters)
+end
+function updateIncome()
+    income_button_parameters.font_size = getButtonFontSize()
+    income_button_parameters.label = tostring(data.income)
+    self.editButton(income_button_parameters)
+end
+-- Для значения дохода возвращает нужный размер шрифта
+function getButtonFontSize()
+    if data.income == 0 then
+        return ONE_DIGIT_FONT_SIZE+50
+    elseif data.income == 50 then
+        return TWO_DIGIT_FONT_SIZE
+    elseif data.income >= 100 or data.income == -50 then
+        return THREE_DIGIT_FONT_SIZE
+    end
+end
+--]]
+-- Создание кнопок с заданными параметрами
+function createButtons()
+    hp_button_parameters.label = tostring(data.hp)
+    range_button_parameters.label = tostring(data.range)
+    distance_button_parameters.label = tostring(data.distance)
+    income_button_parameters.label = tostring(data.income)
+    self.createButton(hp_button_parameters)
+    self.createButton(range_button_parameters)
+    self.createButton(distance_button_parameters)
+    self.createButton(income_button_parameters)
+    self.createButton(plus_hp_button_parameters)
+    self.createButton(minus_hp_button_parameters)
+    self.createButton(plus_range_button_parameters)
+    self.createButton(minus_range_button_parameters)
+    self.createButton(plus_distance_button_parameters)
+    self.createButton(minus_distance_button_parameters)
+    self.createButton(plus_income_button_parameters)
+    self.createButton(minus_income_button_parameters)
+end
+-- Создание таблиц параметров кнопок
+function generateButtonParameters()
+    hp_button_parameters = {
+        index = 0,
+        click_function = 'click_none', function_owner = self, label = '',
+        position = {HP_BUTTON_HORIZONTAL_POSITION, 0.1, HP_BUTTON_VERTICAL_POSITION},
+        width = 0, height = 0,
+        color = BUTTON_BACKGROUND_COLOR, font_color = BUTTON_FONT_COLOR,
+        font_size = ONE_DIGIT_FONT_SIZE
+    }
+    range_button_parameters = {
+        index = 1,
+        click_function = 'click_none', function_owner = self, label = '',
+        position = {RANGE_BUTTON_HORIZONTAL_POSITION, 0.1, RANGE_BUTTON_VERTICAL_POSITION},
+        width = 0, height = 0,
+        color = BUTTON_BACKGROUND_COLOR, font_color = BUTTON_FONT_COLOR,
+        font_size = 60
+    }
+    distance_button_parameters = {
+        index = 2,
+        click_function = 'click_none', function_owner = self, label = '',
+        position = {DISTANCE_BUTTON_HORIZONTAL_POSITION, 0.1, DISTANCE_BUTTON_VERTICAL_POSITION},
+        width = 0, height = 0,
+        color = BUTTON_BACKGROUND_COLOR, font_color = BUTTON_FONT_COLOR,
+        font_size = 60
+    }
+    income_button_parameters = {
+        index = 3,
+        click_function = 'click_none', function_owner = self, label = '',
+        position = {INCOME_BUTTON_HORIZONTAL_POSITION, 0.1, INCOME_BUTTON_VERTICAL_POSITION},
+        width = 0, height = 0,
+        color = BUTTON_BACKGROUND_COLOR, font_color = BUTTON_FONT_COLOR,
+        font_size = getButtonFontSize()
+    }
+    plus_hp_button_parameters = {
+        click_function = 'add_hp', function_owner = self, label = PLUS_ONE_BUTTON_LABEL,
+        position = {PLUS_HP_BUTTON_HORIZONTAL_POSITION, 0.1, PLUS_HP_BUTTON_VERTICAL_POSITION},
+        width = ONE_DIGIT_BUTTON_WIDTH, height = ONE_DIGIT_BUTTON_HEIGHT,
+        color = BUTTON_BACKGROUND_COLOR, font_color = BUTTON_FONT_COLOR,
+        font_size = ONE_DIGIT_FONT_SIZE
+    }
+    minus_hp_button_parameters = {
+        click_function = 'subtract_hp', function_owner = self, label = MINUS_ONE_BUTTON_LABEL,
+        position = {MINUS_HP_BUTTON_HORIZONTAL_POSITION, 0.1, MINUS_HP_BUTTON_VERTICAL_POSITION},
+        width = ONE_DIGIT_BUTTON_WIDTH, height = ONE_DIGIT_BUTTON_HEIGHT,
+        color = BUTTON_BACKGROUND_COLOR, font_color = BUTTON_FONT_COLOR,
+        font_size = ONE_DIGIT_FONT_SIZE
+    }
+    plus_range_button_parameters = {
+        click_function = 'add_range', function_owner = self, label = PLUS_ONE_BUTTON_LABEL,
+        position = {PLUS_RANGE_BUTTON_HORIZONTAL_POSITION, 0.1, PLUS_RANGE_BUTTON_VERTICAL_POSITION},
+        width = ONE_DIGIT_BUTTON_WIDTH, height = ONE_DIGIT_BUTTON_HEIGHT,
+        color = BUTTON_BACKGROUND_COLOR, font_color = BUTTON_FONT_COLOR,
+        font_size = ONE_DIGIT_FONT_SIZE
+    }
+    minus_range_button_parameters = {
+        click_function = 'subtract_range', function_owner = self, label = MINUS_ONE_BUTTON_LABEL,
+        position = {MINUS_RANGE_BUTTON_HORIZONTAL_POSITION, 0.1, MINUS_RANGE_BUTTON_VERTICAL_POSITION},
+        width = ONE_DIGIT_BUTTON_WIDTH, height = ONE_DIGIT_BUTTON_HEIGHT,
+        color = BUTTON_BACKGROUND_COLOR, font_color = BUTTON_FONT_COLOR,
+        font_size = ONE_DIGIT_FONT_SIZE
+    }
+    plus_distance_button_parameters = {
+        click_function = 'add_distance', function_owner = self, label = PLUS_ONE_BUTTON_LABEL,
+        position = {PLUS_DISTANCE_BUTTON_HORIZONTAL_POSITION, 0.1, PLUS_DISTANCE_BUTTON_VERTICAL_POSITION},
+        width = ONE_DIGIT_BUTTON_WIDTH, height = ONE_DIGIT_BUTTON_HEIGHT,
+        color = BUTTON_BACKGROUND_COLOR, font_color = BUTTON_FONT_COLOR,
+        font_size = ONE_DIGIT_FONT_SIZE
+    }
+    minus_distance_button_parameters = {
+        click_function = 'subtract_distance', function_owner = self, label = MINUS_ONE_BUTTON_LABEL,
+        position = {MINUS_DISTANCE_BUTTON_HORIZONTAL_POSITION, 0.1, MINUS_DISTANCE_BUTTON_VERTICAL_POSITION},
+        width = ONE_DIGIT_BUTTON_WIDTH, height = ONE_DIGIT_BUTTON_HEIGHT,
+        color = BUTTON_BACKGROUND_COLOR, font_color = BUTTON_FONT_COLOR,
+        font_size = ONE_DIGIT_FONT_SIZE
+    }
+    plus_income_button_parameters = {
+        click_function = 'add_income', function_owner = self, label = '+50',
+        position = {PLUS_INCOME_BUTTON_HORIZONTAL_POSITION, 0.1, PLUS_INCOME_BUTTON_VERTICAL_POSITION},
+        width = ONE_DIGIT_BUTTON_WIDTH, height = ONE_DIGIT_BUTTON_HEIGHT,
+        color = BUTTON_BACKGROUND_COLOR, font_color = BUTTON_FONT_COLOR,
+        font_size = ONE_DIGIT_FONT_SIZE
+    }
+    minus_income_button_parameters = {
+        click_function = 'subtract_income', function_owner = self, label = '-50',
+        position = {MINUS_INCOME_BUTTON_HORIZONTAL_POSITION, 0.1, MINUS_INCOME_BUTTON_VERTICAL_POSITION},
+        width = ONE_DIGIT_BUTTON_WIDTH, height = ONE_DIGIT_BUTTON_HEIGHT,
+        color = BUTTON_BACKGROUND_COLOR, font_color = BUTTON_FONT_COLOR,
+        font_size = ONE_DIGIT_FONT_SIZE
+    }
+end
